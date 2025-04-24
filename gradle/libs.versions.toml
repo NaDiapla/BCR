@@ -14,6 +14,8 @@ kotlin = "2.1.10"
 kotlinx-serialization = "1.8.0"
 kudzu = "5.3.0"
 material = "1.12.0"
+openai-realtime-webrtc-transport = "0.3.3"
+webrtc = "1.0.+"
 
 [libraries]
 androidx-activity = { group = "androidx.activity", name = "activity-ktx", version.ref = "androidx-activity" }
@@ -27,6 +29,8 @@ androidx-recyclerview = { group = "androidx.recyclerview", name = "recyclerview"
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 kudzu = { group = "io.github.copper-leaf", name = "kudzu-core", version.ref = "kudzu" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+openai-realtime-webrtc-transport = { module = "ai.pipecat:openai-realtime-webrtc-transport", name = "openai-realtime-webrtc-transport", version.ref = "openai-realtime-webrtc-transport" }
+webrtc = { group = "org.webrtc:google-webrtc", name = "webrtc", version.ref="webrtc"}
 
 # Test
 junit = { group = "androidx.test.ext", name = "junit", version.ref = "junit" }

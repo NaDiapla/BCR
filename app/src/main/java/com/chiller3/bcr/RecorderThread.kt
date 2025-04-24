@@ -39,6 +39,7 @@ import com.chiller3.bcr.output.PhoneNumber
 import com.chiller3.bcr.output.RecordingJson
 import com.chiller3.bcr.output.Retention
 import com.chiller3.bcr.rule.RecordRule
+import com.example.callai.CallAIManager
 import kotlinx.serialization.json.Json
 import java.lang.Process
 import java.nio.ByteBuffer
@@ -64,6 +65,7 @@ class RecorderThread(
     private val context: Context,
     private val listener: OnRecordingCompletedListener,
     private val parentCall: Call,
+    var aiManager: CallAIManager? = null
 ) : Thread(RecorderThread::class.java.simpleName) {
     private val tag = "${RecorderThread::class.java.simpleName}/${id}"
     private val prefs = Preferences(context)

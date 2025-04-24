@@ -146,11 +146,17 @@ android {
     }
     signingConfigs {
         create("release") {
-            val keystore = System.getenv("RELEASE_KEYSTORE")
+            /*val keystore = System.getenv("RELEASE_KEYSTORE")
             storeFile = if (keystore != null) { File(keystore) } else { null }
             storePassword = System.getenv("RELEASE_KEYSTORE_PASSPHRASE")
             keyAlias = System.getenv("RELEASE_KEY_ALIAS")
-            keyPassword = System.getenv("RELEASE_KEY_PASSPHRASE")
+            keyPassword = System.getenv("RELEASE_KEY_PASSPHRASE")*/
+            //val keystore = "./keystore/google_upload.jks"
+            val keystore = "C://Work/01.Workspace/BCR/app/keystore/google_upload.jks"
+            storeFile = if (keystore != null) { File(keystore) } else { null }
+            storePassword = "icubeon!"
+            keyAlias = "google_upload"
+            keyPassword = "icubeon!"
         }
     }
     buildTypes {
@@ -208,6 +214,7 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.kudzu)
     implementation(libs.material)
+    implementation(libs.openai.realtime.webrtc.transport)
     testImplementation(libs.junit)
 }
 
