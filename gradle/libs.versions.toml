@@ -16,6 +16,8 @@ kudzu = "5.3.0"
 material = "1.12.0"
 openai-realtime-webrtc-transport = "0.3.3"
 webrtc = "1.0.+"
+okhttp = "4.12.0"
+okio = "3.6.0"
 
 [libraries]
 androidx-activity = { group = "androidx.activity", name = "activity-ktx", version.ref = "androidx-activity" }
@@ -31,6 +33,9 @@ kudzu = { group = "io.github.copper-leaf", name = "kudzu-core", version.ref = "k
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 openai-realtime-webrtc-transport = { module = "ai.pipecat:openai-realtime-webrtc-transport", name = "openai-realtime-webrtc-transport", version.ref = "openai-realtime-webrtc-transport" }
 webrtc = { group = "org.webrtc:google-webrtc", name = "webrtc", version.ref="webrtc"}
+okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
+okio    = { group = "com.squareup.okio",  name = "okio",    version.ref = "okio" }
+
 
 # Test
 junit = { group = "androidx.test.ext", name = "junit", version.ref = "junit" }

@@ -215,6 +215,8 @@ dependencies {
     implementation(libs.kudzu)
     implementation(libs.material)
     implementation(libs.openai.realtime.webrtc.transport)
+    implementation(libs.okhttp)
+    implementation(libs.okio)
     testImplementation(libs.junit)
 }
 

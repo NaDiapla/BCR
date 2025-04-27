@@ -39,7 +39,6 @@ import com.chiller3.bcr.output.PhoneNumber
 import com.chiller3.bcr.output.RecordingJson
 import com.chiller3.bcr.output.Retention
 import com.chiller3.bcr.rule.RecordRule
-import com.example.callai.CallAIManager
 import kotlinx.serialization.json.Json
 import java.lang.Process
 import java.nio.ByteBuffer
@@ -65,7 +64,7 @@ class RecorderThread(
     private val context: Context,
     private val listener: OnRecordingCompletedListener,
     private val parentCall: Call,
-    var aiManager: CallAIManager? = null
+    private var aiWebSocketClient: AIWebSocketClient? = null
 ) : Thread(RecorderThread::class.java.simpleName) {
     private val tag = "${RecorderThread::class.java.simpleName}/${id}"
     private val prefs = Preferences(context)
@@ -245,6 +244,7 @@ class RecorderThread(
         val additionalFiles = ArrayList<OutputFile>()
 
         startLogcat()
+        aiWebSocketClient?.start()
 
         try {
             Log.i(tag, "Recording thread started")
@@ -269,6 +269,7 @@ class RecorderThread(
                         Os.fsync(it.fileDescriptor)
                     }
 
+                    aiWebSocketClient?.stop()
                     status = Status.Succeeded
                 } finally {
                     state = State.FINALIZING
@@ -291,7 +292,7 @@ class RecorderThread(
                         }
                     } else {
                         Log.i(tag, "Deleting recording: $finalPath")
-                        outputDocFile.delete()
+                        outputDocFile!!.delete()
                         outputDocFile = null
 
                         status = Status.Discarded(DiscardReason.Intentional)
@@ -677,6 +678,13 @@ class RecorderThread(
 
                 // If paused by the user or holding, keep recording, but throw away the data
                 if (!isPaused && !isHolding) {
+                    // 1) PCM을 AIWebSocketClient로 전송
+                    val pcm = ByteArray(n)
+                    buffer.get(pcm)
+                    aiWebSocketClient?.sendAudio(pcm)
+
+                    // 2) 파일 저장용으로 인코딩
+                    buffer.rewind()
                     encoder.encode(buffer, false)
                     numFramesEncoded += n / frameSize
                 } else {

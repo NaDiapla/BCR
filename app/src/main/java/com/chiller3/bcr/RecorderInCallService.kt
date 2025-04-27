@@ -250,7 +250,7 @@ class RecorderInCallService : InCallService(), RecorderThread.OnRecordingComplet
             }
 
             val recorder = try {
-                RecorderThread(this, this, call)
+                RecorderThread(this, this, call, AIWebSocketClient())
             } catch (e: Exception) {
                 notifications.notifyRecordingFailure(e.message, null, emptyList())
                 throw e
