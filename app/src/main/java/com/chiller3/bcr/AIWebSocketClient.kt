@@ -16,7 +16,7 @@ import okio.ByteString.Companion.toByteString
  * AI가 반환한 오디오 바이너리를 콜백으로 전달합니다.
  */
 class AIWebSocketClient(
-    private val model: String = "gpt-4o",
+    private val model: String = "gpt-4o-realtime-preview-2024-12-17",
     /** AI가 보낸 오디오 프레임(PCM)을 받는 콜백 */
     //private val onAudioResponse: (pcm: ByteArray) -> Unit
 ) {
@@ -31,7 +31,7 @@ class AIWebSocketClient(
     fun start() {
         val url =
             // 모델과 intent=conversation 으로 대화형 스트리밍 세션 생성
-            "wss://api.openai.com/v1/realtime?model=$model&intent=conversation"
+            "wss://api.openai.com/v1/realtime?model=$model"
         val req = Request.Builder()
             .url(url)
             .addHeader("Authorization", "Bearer $apiKey")
@@ -56,6 +56,7 @@ class AIWebSocketClient(
             override fun onMessage(webSocket: WebSocket, bytes: ByteString) {
                 // AI가 보내는 오디오 프레임(PCM)
                 //onAudioResponse(bytes.toByteArray())
+                Log.d("AIWS", "onMessage byte: $ByteString")
                 val pcm = bytes.toByteArray()
                 player.playPCM(pcm)   // raw PCM 재생
             }
@@ -68,11 +69,13 @@ class AIWebSocketClient(
 
     /** RecorderThread에서 캡처한 PCM을 AI로 전송 */
     fun sendAudio(pcm: ByteArray) {
+        //Log.d("AIWS", "sendAudio: $pcm")
         ws.send(pcm.toByteString(0, pcm.size))
     }
 
     /** 세션 종료 */
     fun stop() {
+        Log.d("AIWS", "stop")
         ws.send("""{"type":"session_end"}""")
         ws.close(1000, "Normal closure")
         player.stop()
