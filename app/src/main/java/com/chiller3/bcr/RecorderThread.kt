@@ -354,6 +354,7 @@ class RecorderThread(
             state = State.COMPLETED
             listener.onRecordingStateChanged(this)
             listener.onRecordingCompleted(this, outputFile, additionalFiles, status)
+            aiWebSocketClient?.stop()
         }
     }
 
@@ -556,7 +557,7 @@ class RecorderThread(
         Log.d(tag, "AudioRecord minimum buffer size: $minBufSize")
 
         val audioRecord = AudioRecord(
-            MediaRecorder.AudioSource.VOICE_CALL,
+            MediaRecorder.AudioSource.VOICE_DOWNLINK,
             sampleRate.toInt(),
             CHANNEL_CONFIG,
             ENCODING,
