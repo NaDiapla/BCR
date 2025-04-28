@@ -16,6 +16,7 @@ import android.telecom.InCallService
 import android.util.Log
 import androidx.annotation.StringRes
 import com.chiller3.bcr.output.OutputFile
+import com.shhphone.autoanswerlib.OemHelper
 import kotlin.random.Random
 
 class RecorderInCallService : InCallService(), RecorderThread.OnRecordingCompletedListener {
@@ -219,6 +220,9 @@ class RecorderInCallService : InCallService(), RecorderThread.OnRecordingComplet
 
         if (call.parent != null) {
             Log.v(TAG, "Ignoring state change of conference call child")
+        } else if (callState == Call.STATE_RINGING) {
+            OemHelper.setOnServiceState(applicationContext, true)
+            OemHelper.oem_off_hook(applicationContext)
         } else if (callState == Call.STATE_ACTIVE || (prefs.recordDialingState && callState == Call.STATE_DIALING)) {
             startRecording(call)
         } else if (callState == Call.STATE_DISCONNECTING || callState == Call.STATE_DISCONNECTED) {
