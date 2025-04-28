@@ -1,12 +1,16 @@
-// MusicPlayer.kt
 package com.chiller3.bcr
 
+import android.content.Context
 import android.media.AudioAttributes
 import android.media.AudioFormat
+import android.media.AudioManager
 import android.media.AudioTrack
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 
 class MusicPlayer(
+    private val context: Context,
     private val sampleRate: Int,
     private val stereo: Boolean
 ) {
@@ -16,6 +20,15 @@ class MusicPlayer(
         AudioFormat.CHANNEL_OUT_MONO
 
     private var audioTrack: AudioTrack? = null
+    private var totalFramesWritten = 0
+    private var onCompletionListener: (() -> Unit)? = null
+
+    private var audioManager: AudioManager? = null
+
+    /** Register a callback to be invoked when playback of the current buffer completes */
+    fun setOnCompletionListener(listener: () -> Unit) {
+        onCompletionListener = listener
+    }
 
     init {
         initAudioTrack()
@@ -27,6 +40,11 @@ class MusicPlayer(
             channelConfig,
             AudioFormat.ENCODING_PCM_16BIT
         )
+
+        if (audioManager == null) audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        audioManager!!.mode = AudioManager.MODE_IN_COMMUNICATION
+        audioManager!!.setParameters("phone_memo=phone_hold")
+
         audioTrack = AudioTrack.Builder()
             .setAudioAttributes(
                 AudioAttributes.Builder()
@@ -44,8 +62,20 @@ class MusicPlayer(
             .setBufferSizeInBytes(minBuf)
             .setTransferMode(AudioTrack.MODE_STREAM)
             .build()
-            .apply { play() }
-
+            .apply {
+                // Listen for marker to signal completion
+                setPlaybackPositionUpdateListener(object : AudioTrack.OnPlaybackPositionUpdateListener {
+                    override fun onMarkerReached(track: AudioTrack?) {
+                        Log.d("MusicPlayer", "Playback completed at marker")
+                        onCompletionListener?.invoke()
+                    }
+                    override fun onPeriodicNotification(track: AudioTrack?) {
+                        // no-op
+                    }
+                }, Handler(Looper.getMainLooper()))
+                play()
+            }
+        totalFramesWritten = 0
         Log.d("MusicPlayer", "AudioTrack initialized (rate=$sampleRate, stereo=$stereo)")
     }
 
@@ -57,6 +87,16 @@ class MusicPlayer(
             val written = track.write(pcmData, 0, pcmData.size)
             if (written < 0) {
                 Log.e("MusicPlayer", "AudioTrack write error: $written")
+                return
+            }
+            // Calculate frames written and update marker for completion callback
+            val bytesPerFrame = 2 * if (stereo) 2 else 1
+            val frames = written / bytesPerFrame
+            totalFramesWritten += frames
+            try {
+                track.setNotificationMarkerPosition(totalFramesWritten)
+            } catch (e: Exception) {
+                Log.w("MusicPlayer", "Failed to set marker position", e)
             }
         } ?: run {
             initAudioTrack()
@@ -75,5 +115,6 @@ class MusicPlayer(
             }
         }
         audioTrack = null
+        audioManager = null
     }
 }

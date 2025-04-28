@@ -34,7 +34,7 @@ material = { group = "com.google.android.material", name = "material", version.r
 openai-realtime-webrtc-transport = { module = "ai.pipecat:openai-realtime-webrtc-transport", name = "openai-realtime-webrtc-transport", version.ref = "openai-realtime-webrtc-transport" }
 webrtc = { group = "org.webrtc:google-webrtc", name = "webrtc", version.ref="webrtc"}
 okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
-okio    = { group = "com.squareup.okio",  name = "okio",    version.ref = "okio" }
+okio = { group = "com.squareup.okio",  name = "okio",    version.ref = "okio" }
 
 
 # Test

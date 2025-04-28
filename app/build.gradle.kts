@@ -217,6 +217,7 @@ dependencies {
     implementation(libs.openai.realtime.webrtc.transport)
     implementation(libs.okhttp)
     implementation(libs.okio)
+    implementation(files("libs/AutoAnswerLib-release.aar"))
     testImplementation(libs.junit)
 }
 
