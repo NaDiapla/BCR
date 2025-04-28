@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 import org.eclipse.jgit.api.ArchiveCommand
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.archive.TarFormat
@@ -126,6 +127,8 @@ android {
         versionName = gitVersionName
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "OPENAI_API_KEY", getApiKey("OPENAI_API_KEY"))
 
         buildConfigField("String", "PROJECT_URL_AT_COMMIT",
             "\"${projectUrl}/tree/${gitVersionTriple.third.name}\"")
@@ -566,6 +569,10 @@ fun updateChangelog(version: String?, replaceFirst: Boolean) {
 fun updateMagiskChangelog(gitRef: String) {
     File(File(File(File(projectDir, "magisk"), "updates"), "release"), "changelog.txt")
         .writeText("The changelog can be found at: [`CHANGELOG.md`]($projectUrl/blob/$gitRef/CHANGELOG.md).\n")
+}
+
+fun getApiKey(propertyKey: String): String {
+    return gradleLocalProperties(rootDir, providers).getProperty(propertyKey)
 }
 
 tasks.register("changelogUpdateLinks") {
