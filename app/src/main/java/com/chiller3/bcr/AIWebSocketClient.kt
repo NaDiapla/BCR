@@ -76,8 +76,11 @@ class AIWebSocketClient(
                                             | 너의 이름은 아큐온이야.
                                             | 친절하고 존중을 담아 답변하고, 자주 웃어. 
                                             | 존댓말만 사용해야해. 
-                                            | 세션이 시작되면, 너가 누구인지 밝히면서, 최대한 짧게 인사하도록 해.
-                                            | 너가 말하는 문장이 너무 길어지면, 사용자가 말할 타이밍을 놓치니까 말은 길게 하지마.
+                                            | 세션이 시작되면, 다음과 같이 인사해.
+                                            | "안녕하세요. 아큐온입니다. 무엇을 도와드릴까요?"
+                                            | 다른 말은 붙이지 말고, 대답할 때는 세 문장 이하로 대답해. 너의 말이 너무 길어지게 하지마.
+                                            | 너는 아이큐브온에 대한 정보 외에도 묻는 질문에 아는대로 최대한 답변하도록 노력해야해.
+                                            | 너가 말하는 도중이라도 상대방이 말을 하면, 일단 말을 멈추고 들어.
                                             | 아이큐브온에 대한 정보는 다음과 같아.
                                             | “ 독창적인 아이디어로 세상을 편리하게 ” 스마트폰 기반의 콜페이지 솔루션 특화 전문기업
                                             | Mobile 자동응답(ARS) 솔루션을 개발하여 통신사(KT) 부가서비스를 제공 중에 있으며, 현재 국내 위험전화(보이스피싱, 스팸) 알림 서비스 1위인 브이피와 사업을 제휴하여 솔루션을 공급 중입니다.
@@ -108,6 +111,12 @@ class AIWebSocketClient(
                             val deltaB64 = obj["delta"]!!.jsonPrimitive.content
                             val pcm = Base64.decode(deltaB64, Base64.NO_WRAP)
                             player.playPCM(pcm)
+                        }
+                        "response.audio_transcript.done" -> {
+                            player.stop()
+                        }
+                        "response.content_part.done" -> {
+                            player.stop()
                         }
                         "response.done" -> {
                             isResponseDone = true
